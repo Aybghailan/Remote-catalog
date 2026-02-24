@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Remote Catalog</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  padding: 10px;
+  background: url('background.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+h2 {
+  text-align: center;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.card {
+  background: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card img {
+  width: 70px;
+  height: 50px;
+  object-fit: contain;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.card div {
+  flex: 1;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Remote Catalog</h2>
+
+<input type="text" id="search" placeholder="Search brand or device...">
+
+<div id="results">Loading...</div>
+
+<script>
+
+const sheetID = "1BN94ioeCHOEy-D12cVHcrslg3CmMUQpGUg5qAe6aiWw";
+const sheetName = "Sheet1";
+
+const apiURL =
+`https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}`;
+
+let data = [];
+
+fetch(apiURL)
+.then(response => response.text())
+.then(text => {
+
+  const json = JSON.parse(text.substring(47).slice(0,-2));
+
+  data = json.table.rows.map(row => ({
+    image: row.c[0]?.v || "",
+    brand: (row.c[1]?.v || "").toLowerCase(),
+    worksWith: (row.c[2]?.v || "").toLowerCase()
+  }));
+
+  showResults("");
+
+})
+.catch(() => {
+  document.getElementById("results").innerHTML =
+  "⚠️ Cannot load data. Check Sheet sharing settings.";
+});
+
+const resultsDiv = document.getElementById("results");
+const searchInput = document.getElementById("search");
+
+searchInput.addEventListener("input", e =>
+  showResults(e.target.value.toLowerCase())
+);
+
+function showResults(query){
+  resultsDiv.innerHTML = "";
+
+  if(query.length === 0){
+    return;
+  }
+
+  const results = data.filter(d =>
+    d.brand.includes(query)
+  );
+
+  if(results.length === 0){
+    resultsDiv.innerHTML = "<p>No remotes found</p>";
+    return;
+  }
+
+  results.forEach(d => {
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <img src="${d.image}" alt="">
+      <div>
+        <strong>${d.brand.toUpperCase()}</strong><br>
+        ${d.worksWith}
+      </div>`;
+    resultsDiv.appendChild(card);
+  });
+}
+
+</script>
+
+</body>
+</html>
