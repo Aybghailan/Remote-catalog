@@ -12,7 +12,6 @@
 
 <!-- ستايل شامل وجميل -->
 <style>
-/* خلفية كاملة */
 body {
   font-family: Arial, sans-serif;
   padding: 10px;
@@ -20,14 +19,12 @@ body {
   background-size: cover;
 }
 
-/* العنوان */
 h2 {
   text-align: center;
   color: #fff;
   text-shadow: 1px 1px 2px #000;
 }
 
-/* مربع البحث */
 input {
   width: 100%;
   padding: 14px;
@@ -45,7 +42,6 @@ input:focus {
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* البطاقات */
 .card {
   display: flex;
   align-items: center;
@@ -63,7 +59,6 @@ input:focus {
   box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-/* صورة الريموت */
 .card img {
   width: 80px;
   height: 60px;
@@ -77,7 +72,6 @@ input:focus {
   transform: scale(1.05);
 }
 
-/* نص البطاقة */
 .card div {
   flex: 1;
   font-weight: bold;
@@ -89,9 +83,7 @@ input:focus {
 <body>
 
 <h2>Remote Catalog</h2>
-
 <input type="text" id="search" placeholder="Search brand...">
-
 <div id="results">Loading...</div>
 
 <script>
@@ -110,7 +102,7 @@ fetch(apiURL)
     brand: (r.c[1]?.v || "").toLowerCase(),
     worksWith: r.c[2]?.v || ""
   }));
-  showResults("");
+  showResults(""); // عرض كل النتائج فور التحميل
 })
 .catch(() => {
   document.getElementById("results").innerHTML =
@@ -119,12 +111,36 @@ fetch(apiURL)
 
 const resultsDiv = document.getElementById("results");
 const searchInput = document.getElementById("search");
-
 searchInput.addEventListener("input", e => showResults(e.target.value.toLowerCase()));
+
+function addCard(d){
+  const card = document.createElement("div");
+  card.className = "card";
+
+  // لون حسب الماركة
+  let color = "rgba(255,255,255,0.85)";
+  if(d.brand.includes("samsung")) color = "#0072c6";
+  else if(d.brand.includes("lg")) color = "#a50034";
+  else if(d.brand.includes("sony")) color = "#000";
+  card.style.background = color;
+  card.style.color = "#fff";
+
+  card.innerHTML = `
+    <img src="${d.image}" onerror="this.style.display='none'" alt="">
+    <div>
+      ${d.brand.toUpperCase()}<br>
+      <small>${d.worksWith}</small>
+    </div>`;
+  resultsDiv.appendChild(card);
+}
 
 function showResults(query){
   resultsDiv.innerHTML = "";
-  if(query.length === 0) return;
+  if(query.length === 0){
+    // عرض كل الريموتات إذا لم يُكتب شيء
+    data.forEach(d => addCard(d));
+    return;
+  }
 
   const results = data.filter(d => d.brand.includes(query));
   if(results.length === 0){
@@ -132,26 +148,7 @@ function showResults(query){
     return;
   }
 
-  results.forEach(d => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    // تحديد لون حسب الماركة
-    let color = "rgba(255,255,255,0.85)";
-    if(d.brand.includes("samsung")) color = "#0072c6";
-    else if(d.brand.includes("lg")) color = "#a50034";
-    else if(d.brand.includes("sony")) color = "#000";
-    card.style.background = color;
-    card.style.color = "#fff";
-
-    card.innerHTML = `
-      <img src="${d.image}" onerror="this.style.display='none'" alt="">
-      <div>
-        ${d.brand.toUpperCase()}<br>
-        <small>${d.worksWith}</small>
-      </div>`;
-    resultsDiv.appendChild(card);
-  });
+  results.forEach(d => addCard(d));
 }
 </script>
 
