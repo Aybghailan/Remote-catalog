@@ -10,8 +10,9 @@
 <link rel="icon" sizes="192x192" href="logo.png">
 <meta name="theme-color" content="#a0c4ff">
 
-<!-- ستايل جميل -->
+<!-- ستايل شامل وجميل -->
 <style>
+/* خلفية كاملة */
 body {
   font-family: Arial, sans-serif;
   padding: 10px;
@@ -19,42 +20,68 @@ body {
   background-size: cover;
 }
 
+/* العنوان */
 h2 {
   text-align: center;
   color: #fff;
   text-shadow: 1px 1px 2px #000;
 }
 
+/* مربع البحث */
 input {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   margin-bottom: 12px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  font-size: 18px;
+  border-radius: 12px;
+  border: 2px solid #0072c6;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: box-shadow 0.2s, border-color 0.2s;
 }
 
+input:focus {
+  border-color: #00aaff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* البطاقات */
 .card {
-  background: rgba(255,255,255,0.9);
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.85);
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* صورة الريموت */
 .card img {
-  width: 70px;
-  height: 50px;
+  width: 80px;
+  height: 60px;
   object-fit: contain;
-  border: 1px solid #ddd;
-  border-radius: 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: transform 0.2s;
 }
 
+.card img:hover {
+  transform: scale(1.05);
+}
+
+/* نص البطاقة */
 .card div {
   flex: 1;
+  font-weight: bold;
+  font-size: 14px;
 }
 </style>
 </head>
@@ -108,11 +135,20 @@ function showResults(query){
   results.forEach(d => {
     const card = document.createElement("div");
     card.className = "card";
+
+    // تحديد لون حسب الماركة
+    let color = "rgba(255,255,255,0.85)";
+    if(d.brand.includes("samsung")) color = "#0072c6";
+    else if(d.brand.includes("lg")) color = "#a50034";
+    else if(d.brand.includes("sony")) color = "#000";
+    card.style.background = color;
+    card.style.color = "#fff";
+
     card.innerHTML = `
       <img src="${d.image}" onerror="this.style.display='none'" alt="">
       <div>
-        <strong>${d.brand.toUpperCase()}</strong><br>
-        ${d.worksWith}
+        ${d.brand.toUpperCase()}<br>
+        <small>${d.worksWith}</small>
       </div>`;
     resultsDiv.appendChild(card);
   });
