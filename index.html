@@ -45,7 +45,8 @@ input:focus {
   display: flex;
   align-items: center;
   gap: 10px;
-  background: rgba(255,255,255,0.85);
+  background: #0072c6; /* لون موحد */
+  color: #fff;
   padding: 12px;
   margin-bottom: 10px;
   border-radius: 12px;
@@ -86,22 +87,24 @@ input:focus {
 <div id="results">Loading...</div>
 
 <script>
+// Google Sheet ID واسم الورقة
 const sheetID = "1BN94ioeCHOEy-D12cVHcrslg3CmMUQpGUg5qAe6aiWw";
 const sheetName = "Sheet1";
 const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?sheet=${sheetName}`;
 
 let data = [];
 
+// جلب البيانات من Google Sheets
 fetch(apiURL)
 .then(res => res.text())
 .then(rep => {
   const jsonData = JSON.parse(rep.substr(47).slice(0,-2));
   data = jsonData.table.rows.map(r => ({
-    image: r.c[0]?.v || "",
+    image: r.c[0]?.v || "", // ضع هنا رابط الصورة من Google Sheets
     brand: (r.c[1]?.v || "").toLowerCase(),
     price: r.c[2]?.v || ""
   }));
-  showResults("");
+  showResults(""); // عرض كل النتائج فور التحميل
 })
 .catch(() => {
   document.getElementById("results").innerHTML =
@@ -112,17 +115,10 @@ const resultsDiv = document.getElementById("results");
 const searchInput = document.getElementById("search");
 searchInput.addEventListener("input", e => showResults(e.target.value.toLowerCase()));
 
+// دالة لإضافة بطاقة
 function addCard(d){
   const card = document.createElement("div");
   card.className = "card";
-
-  // لون حسب الماركة
-  let color = "rgba(255,255,255,0.85)";
-  if(d.brand.includes("samsung")) color = "#0072c6";
-  else if(d.brand.includes("lg")) color = "#a50034";
-  else if(d.brand.includes("sony")) color = "#000";
-  card.style.background = color;
-  card.style.color = "#fff";
 
   card.innerHTML = `
     <img src="${d.image}" onerror="this.style.display='none'" alt="">
@@ -133,6 +129,7 @@ function addCard(d){
   resultsDiv.appendChild(card);
 }
 
+// دالة البحث
 function showResults(query){
   resultsDiv.innerHTML = "";
   if(query.length === 0){
