@@ -11,6 +11,7 @@
 <meta name="theme-color" content="#0072c6">
 
 <style>
+
 body{
   font-family: Arial, sans-serif;
   padding:10px;
@@ -33,6 +34,7 @@ input{
   margin-bottom:12px;
 }
 
+/* بطاقات الأجهزة */
 .card{
   display:flex;
   align-items:center;
@@ -58,6 +60,18 @@ input{
   font-weight:bold;
 }
 
+/* رسالة البحث */
+.message{
+  text-align:center;
+  color:#ff3b3b;
+  font-size:20px;
+  margin-top:60px;
+  font-weight:bold;
+  letter-spacing:1px;
+  text-shadow:0 0 8px rgba(255,0,0,0.5);
+  font-family: Arial, sans-serif;
+}
+
 /* نافذة الصورة المكبرة */
 .imageViewer{
   position:fixed;
@@ -78,12 +92,6 @@ input{
   border-radius:10px;
 }
 
-.message{
-  text-align:center;
-  color:white;
-  font-size:18px;
-  margin-top:40px;
-}
 </style>
 </head>
 
@@ -94,10 +102,10 @@ input{
 <input type="text" id="search" placeholder="Search brand...">
 
 <div id="results" class="message">
-🔎 اكتب اسم الماركة للبحث
+🔎 اكتب اسم الماركة للبحث...
 </div>
 
-<!-- Viewer -->
+<!-- عرض الصورة -->
 <div class="imageViewer" id="viewer">
   <img id="viewerImg">
 </div>
@@ -155,14 +163,14 @@ function showResults(query){
   resultsDiv.innerHTML="";
 
   if(query.trim()===""){
-    resultsDiv.innerHTML="<div class='message'>🔎 اكتب اسم الماركة للبحث</div>";
+    resultsDiv.innerHTML="<div class='message'>🔎 اكتب اسم الماركة للبحث...</div>";
     return;
   }
 
   const results=data.filter(d=>d.brand.includes(query));
 
   if(results.length===0){
-    resultsDiv.innerHTML="<div class='message'>No remotes found</div>";
+    resultsDiv.innerHTML="<div class='message'>❌ لا توجد نتائج</div>";
     return;
   }
 
