@@ -58,7 +58,7 @@ input{
   font-weight:bold;
 }
 
-/* ===== صورة مكبرة ===== */
+/* نافذة الصورة المكبرة */
 .imageViewer{
   position:fixed;
   top:0;
@@ -77,6 +77,13 @@ input{
   max-height:95%;
   border-radius:10px;
 }
+
+.message{
+  text-align:center;
+  color:white;
+  font-size:18px;
+  margin-top:40px;
+}
 </style>
 </head>
 
@@ -86,9 +93,11 @@ input{
 
 <input type="text" id="search" placeholder="Search brand...">
 
-<div id="results">Loading...</div>
+<div id="results" class="message">
+🔎 اكتب اسم الماركة للبحث
+</div>
 
-<!-- نافذة عرض الصورة -->
+<!-- Viewer -->
 <div class="imageViewer" id="viewer">
   <img id="viewerImg">
 </div>
@@ -111,8 +120,6 @@ fetch(apiURL)
     brand:(r.c[1]?.v||"").toLowerCase(),
     price:r.c[2]?.v||""
   }));
-
-  showResults("");
 });
 
 const resultsDiv=document.getElementById("results");
@@ -122,7 +129,7 @@ searchInput.addEventListener("input",
 e=>showResults(e.target.value.toLowerCase())
 );
 
-// إنشاء البطاقة
+// إنشاء بطاقة
 function addCard(d){
 
   const card=document.createElement("div");
@@ -144,24 +151,25 @@ function addCard(d){
 
 // البحث
 function showResults(query){
+
   resultsDiv.innerHTML="";
 
-  if(query.length===0){
-    data.forEach(addCard);
+  if(query.trim()===""){
+    resultsDiv.innerHTML="<div class='message'>🔎 اكتب اسم الماركة للبحث</div>";
     return;
   }
 
   const results=data.filter(d=>d.brand.includes(query));
 
   if(results.length===0){
-    resultsDiv.innerHTML="<p>No remotes found</p>";
+    resultsDiv.innerHTML="<div class='message'>No remotes found</div>";
     return;
   }
 
   results.forEach(addCard);
 }
 
-/* ===== تكبير الصورة ===== */
+/* تكبير الصورة */
 
 const viewer=document.getElementById("viewer");
 const viewerImg=document.getElementById("viewerImg");
