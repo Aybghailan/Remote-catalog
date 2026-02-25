@@ -10,7 +10,6 @@
 <link rel="icon" sizes="192x192" href="logo.png">
 <meta name="theme-color" content="#a0c4ff">
 
-<!-- ستايل شامل وجميل -->
 <style>
 body {
   font-family: Arial, sans-serif;
@@ -100,9 +99,9 @@ fetch(apiURL)
   data = jsonData.table.rows.map(r => ({
     image: r.c[0]?.v || "",
     brand: (r.c[1]?.v || "").toLowerCase(),
-    worksWith: r.c[2]?.v || ""
+    price: r.c[2]?.v || ""
   }));
-  showResults(""); // عرض كل النتائج فور التحميل
+  showResults("");
 })
 .catch(() => {
   document.getElementById("results").innerHTML =
@@ -129,7 +128,7 @@ function addCard(d){
     <img src="${d.image}" onerror="this.style.display='none'" alt="">
     <div>
       ${d.brand.toUpperCase()}<br>
-      <small>${d.worksWith}</small>
+      <small>Price: ${d.price}</small>
     </div>`;
   resultsDiv.appendChild(card);
 }
@@ -137,7 +136,6 @@ function addCard(d){
 function showResults(query){
   resultsDiv.innerHTML = "";
   if(query.length === 0){
-    // عرض كل الريموتات إذا لم يُكتب شيء
     data.forEach(d => addCard(d));
     return;
   }
